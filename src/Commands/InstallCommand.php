@@ -2,28 +2,30 @@
 
 namespace LaravelForminertia\Commands;
 
-use RuntimeException;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
+use Illuminate\Support\Facades\File;
+use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Process\Process;
 
 #[AsCommand(name: 'forminertia:install')]
 class InstallCommand extends Command implements PromptsForMissingInput
 {
     protected $signature = 'forminertia:install {--force : Overwrite existing files}';
+
     protected $description = 'Install FormInertia resources';
 
     public function handle(): int
     {
         $this->info('Installing resources...');
 
-        $source = __DIR__ . '/../../stubs/react';
+        $source = __DIR__.'/../../stubs/react';
         $destination = resource_path('js/components');
 
         if (! File::exists($source)) {
             $this->error('Source folder not found.');
+
             return self::FAILURE;
         }
 
@@ -70,7 +72,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
     private function copyWithoutOverwriting(string $source, string $destination): void
     {
         foreach (File::allFiles($source) as $file) {
-            $target = $destination . '/' . $file->getRelativePathname();
+            $target = $destination.'/'.$file->getRelativePathname();
 
             File::ensureDirectoryExists(dirname($target));
 
@@ -79,7 +81,6 @@ class InstallCommand extends Command implements PromptsForMissingInput
             }
         }
     }
-
 
     /**
      * Run the given commands.
@@ -95,12 +96,12 @@ class InstallCommand extends Command implements PromptsForMissingInput
             try {
                 $process->setTty(true);
             } catch (RuntimeException $e) {
-                $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
             }
         }
 
         $process->run(function ($type, $line) {
-            $this->output->write('    ' . $line);
+            $this->output->write('    '.$line);
         });
     }
 }
