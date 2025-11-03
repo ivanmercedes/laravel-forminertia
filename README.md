@@ -39,9 +39,7 @@ npx shadcn@latest add textarea
 Each field or group of fields is defined using a simple, type-safe schema.
 
 ```tsx
-import FormBuilder, {
-    FormSchemaItem,
-} from "@/components/forminertia/form-builder";
+import { FormSchemaItem } from "@/components/forminertia/form-builder";
 
 const userFormSchema: FormSchemaItem[] = [
     {
@@ -100,7 +98,7 @@ const userFormSchema: FormSchemaItem[] = [
 Then render it inside your page:
 
 ```tsx
-import { store } from '@/routes/login';
+import { store } from "@/routes/login";
 import FormBuilder from "@/components/forminertia/form-builder";
 
 <FormBuilder
