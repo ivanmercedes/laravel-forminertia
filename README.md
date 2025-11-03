@@ -64,3 +64,68 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+
+
+
+
+
+
+
+
+
+```ts
+
+const exampleFormSchema: FormSchemaItem[] = [
+        {
+            type: 'section',
+            heading: 'Información Personal',
+            description: 'Datos básicos del usuario',
+            schema: [
+                {
+                    type: 'grid',
+                    columns: 2,
+                    schema: [
+                        {
+                            type: 'text',
+                            name: 'name',
+                            label: 'Nombre',
+                            required: true,
+                            placeholder: 'John Doe',
+                        },
+                        {
+                            type: 'text',
+                            name: 'email',
+                            label: 'Correo Electrónico',
+                            inputType: 'email',
+                            required: true,
+                            placeholder: 'john@example.com',
+                        },
+                    ],
+                },
+                {
+                    type: 'text',
+                    name: 'phone',
+                    label: 'Teléfono',
+                    inputType: 'tel',
+                    placeholder: '+1 (555) 000-0000',
+                    helperText: 'Incluye el código de país',
+                },
+                {
+                    type: 'date',
+                    name: 'birth_date',
+                    label: 'Fecha de Nacimiento',
+                },
+                {
+                    type: 'textarea',
+                    name: 'pepe',
+                },
+            ],
+        },
+    ];
+
+    const handleSubmit = (data) => {
+        console.log('Form submitted:', data);
+        // En tu app real: post(route('users.store'))
+    };
+```
