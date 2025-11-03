@@ -2,9 +2,9 @@
 
 namespace LaravelForminertia;
 
+use LaravelForminertia\Commands\LaravelForminertiaCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use LaravelForminertia\Commands\LaravelForminertiaCommand;
 
 class LaravelForminertiaServiceProvider extends PackageServiceProvider
 {
