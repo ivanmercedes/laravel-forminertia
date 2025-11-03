@@ -2,9 +2,9 @@
 
 namespace LaravelForminertia;
 
+use LaravelForminertia\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use LaravelForminertia\Commands\LaravelForminertiaCommand;
 
 class LaravelForminertiaServiceProvider extends PackageServiceProvider
 {
@@ -17,9 +17,6 @@ class LaravelForminertiaServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-forminertia')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel_forminertia_table')
-            ->hasCommand(LaravelForminertiaCommand::class);
+            ->hasCommand(InstallCommand::class);
     }
 }
