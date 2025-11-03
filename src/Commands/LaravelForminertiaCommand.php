@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace LaravelForminertia\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelForminertiaCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-forminertia';
 
     public $description = 'My command';
 
