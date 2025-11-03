@@ -1,11 +1,11 @@
-# This is my package laravel-forminertia
+# Laravel Forminertia
+
+A plug-and-play form builder for Laravel’s Inertia Starter Kit — powered by ShadCN UI.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/ivanmercedes/laravel-forminertia.svg?style=flat-square)](https://packagist.org/packages/ivanmercedes/laravel-forminertia)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/ivanmercedes/laravel-forminertia/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/ivanmercedes/laravel-forminertia/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/ivanmercedes/laravel-forminertia/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/ivanmercedes/laravel-forminertia/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/ivanmercedes/laravel-forminertia.svg?style=flat-square)](https://packagist.org/packages/ivanmercedes/laravel-forminertia)
-
-
 
 ## Installation
 
@@ -15,117 +15,122 @@ You can install the package via composer:
 composer require ivanmercedes/laravel-forminertia
 ```
 
-You can publish and run the migrations with:
+Then run the installation command to publish the default resources:
 
 ```bash
-php artisan vendor:publish --tag="laravel-forminertia-migrations"
-php artisan migrate
+php artisan forminertia:install
 ```
 
-You can publish the config file with:
+## ShadCN UI Components
+
+FormInertia uses **ShadCN UI** components such as `Input`, `Select`, `Checkbox`, and `Textarea`.
+
+If you don’t have the `Textarea` component installed, you’ll see a warning during installation.
+You can easily add it by running:
 
 ```bash
-php artisan vendor:publish --tag="laravel-forminertia-config"
+npx shadcn@latest add textarea
 ```
 
-This is the contents of the published config file:
+## Usage Example
 
-```php
-return [
+### 1. Define your schema
+
+Each field or group of fields is defined using a simple, type-safe schema.
+
+```tsx
+import FormBuilder, {
+    FormSchemaItem,
+} from "@/components/forminertia/form-builder";
+
+const userFormSchema: FormSchemaItem[] = [
+    {
+        type: "section",
+        heading: "User Information",
+        schema: [
+            {
+                type: "text",
+                name: "name",
+                label: "Full Name",
+                placeholder: "John Doe",
+                required: true,
+            },
+            {
+                type: "text",
+                name: "email",
+                label: "Email Address",
+                inputType: "email",
+                placeholder: "user@example.com",
+                required: true,
+            },
+            {
+                type: "select",
+                name: "role",
+                label: "User Role",
+                required: true,
+                options: {
+                    admin: "Administrator",
+                    editor: "Editor",
+                    user: "User",
+                },
+            },
+        ],
+    },
+    {
+        type: "section",
+        heading: "Preferences",
+        schema: [
+            {
+                type: "checkbox",
+                name: "is_active",
+                label: "Active Account",
+            },
+            {
+                type: "textarea",
+                name: "bio",
+                label: "Biography",
+                rows: 4,
+                placeholder: "Tell us a bit about this user...",
+            },
+        ],
+    },
 ];
 ```
 
-Optionally, you can publish the views using
+Then render it inside your page:
 
-```bash
-php artisan vendor:publish --tag="laravel-forminertia-views"
+```tsx
+import { store } from '@/routes/login';
+import FormBuilder from "@/components/forminertia/form-builder";
+
+<FormBuilder
+    schema={userFormSchema}
+    form={store.form()}
+    submitLabel="Create User"
+/>;
 ```
 
-## Usage
+## Supported Field Types
 
- 
-## Changelog
+| Type       | Description           |
+| ---------- | --------------------- |
+| `text`     | Standard input fields |
+| `textarea` | Multiline text areas  |
+| `select`   | Dropdown lists        |
+| `checkbox` | Checkbox inputs       |
+| `date`     | Date picker inputs    |
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+---
 
-## Contributing
+## Features
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [Ivan Mercedes](https://github.com/ivanmercedes)
-- [All Contributors](../../contributors)
+-   Designed for the **Laravel Inertia React Starter Kit**
+-   Uses **ShadCN UI** for consistent and elegant styling
+-   Auto-installer for base form components
+-   Type-safe form schemas with **TypeScript**
+-   Extendable and customizable for any use case
+-   **Vue support coming soon**
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-
-
-
-
-
-
-
-
-
-```ts
-
-const exampleFormSchema: FormSchemaItem[] = [
-        {
-            type: 'section',
-            heading: 'Información Personal',
-            description: 'Datos básicos del usuario',
-            schema: [
-                {
-                    type: 'grid',
-                    columns: 2,
-                    schema: [
-                        {
-                            type: 'text',
-                            name: 'name',
-                            label: 'Nombre',
-                            required: true,
-                            placeholder: 'John Doe',
-                        },
-                        {
-                            type: 'text',
-                            name: 'email',
-                            label: 'Correo Electrónico',
-                            inputType: 'email',
-                            required: true,
-                            placeholder: 'john@example.com',
-                        },
-                    ],
-                },
-                {
-                    type: 'text',
-                    name: 'phone',
-                    label: 'Teléfono',
-                    inputType: 'tel',
-                    placeholder: '+1 (555) 000-0000',
-                    helperText: 'Incluye el código de país',
-                },
-                {
-                    type: 'date',
-                    name: 'birth_date',
-                    label: 'Fecha de Nacimiento',
-                },
-                {
-                    type: 'textarea',
-                    name: 'pepe',
-                },
-            ],
-        },
-    ];
-
-    const handleSubmit = (data) => {
-        console.log('Form submitted:', data);
-        // En tu app real: post(route('users.store'))
-    };
-```
