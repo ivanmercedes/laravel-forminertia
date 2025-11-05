@@ -45,6 +45,6 @@ abstract class Form
 
     protected function transformSchema(array $schema): array
     {
-        return array_map(fn($field) => $field->toArray(), $schema);
+        return array_map(fn ($field) => $field->toArray(), $schema);
     }
 }

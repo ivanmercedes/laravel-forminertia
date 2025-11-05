@@ -11,6 +11,7 @@ class SelectField extends Field
     public function options(array $options): static
     {
         $this->options = $options;
+
         return $this;
     }
 

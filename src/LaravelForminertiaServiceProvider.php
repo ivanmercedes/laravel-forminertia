@@ -23,7 +23,7 @@ class LaravelForminertiaServiceProvider extends PackageServiceProvider
     public function registeringPackage(): void
     {
         $this->app->singleton('forminertia', function () {
-            return new FormInertia();
+            return new FormInertia;
         });
     }
 }
