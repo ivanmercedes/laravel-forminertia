@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { Form } from "@inertiajs/react";
-import React from "react";
-import FormField, { FormFieldConfig } from "./form-field";
-import FormGrid, { FormGridConfig } from "./form-grid";
-import FormSection, { FormSectionConfig } from "./form-section";
+import { Button } from '@/components/ui/button';
+import { Form } from '@inertiajs/react';
+import React from 'react';
+import FormField, { FormFieldConfig } from './form-field';
+import FormGrid, { FormGridConfig } from './form-grid';
+import FormSection, { FormSectionConfig } from './form-section';
 
 export type FormSchemaItem =
     | FormFieldConfig
@@ -11,28 +11,30 @@ export type FormSchemaItem =
     | FormSectionConfig;
 
 export interface FormBuilderProps {
-    schema: FormSchemaItem[];
-    form: { action: string; method: "get" | "post" };
+    formSchema: {
+        schemas: FormSchemaItem[];
+    };
+    form: { action: string; method: 'get' | 'post' };
     submitLabel?: string;
 }
 
 const FormBuilder: React.FC<FormBuilderProps> = ({
-    schema,
+    formSchema: { schemas },
     form,
-    submitLabel = "Save",
+    submitLabel = 'Save',
 }) => {
     return (
         <Form {...form} className="flex flex-col gap-6">
             {({ processing, errors }) => (
                 <>
-                    {schema.map((item, index) => (
+                    {schemas.map((item, index) => (
                         <React.Fragment key={index}>
-                            {item.type === "section" ? (
+                            {item.type === 'section' ? (
                                 <FormSection
                                     section={item as FormSectionConfig}
                                     errors={errors}
                                 />
-                            ) : item.type === "grid" ? (
+                            ) : item.type === 'grid' ? (
                                 <FormGrid
                                     grid={item as FormGridConfig}
                                     errors={errors}
@@ -50,7 +52,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
 
                     <div className="flex justify-end gap-4">
                         <Button type="submit" disabled={processing}>
-                            {processing ? "Saving..." : submitLabel}
+                            {processing ? 'Saving...' : submitLabel}
                         </Button>
                     </div>
                 </>

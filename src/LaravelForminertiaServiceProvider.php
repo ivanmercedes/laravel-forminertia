@@ -19,4 +19,11 @@ class LaravelForminertiaServiceProvider extends PackageServiceProvider
             ->name('laravel-forminertia')
             ->hasCommand(InstallCommand::class);
     }
+
+    public function registeringPackage(): void
+    {
+        $this->app->singleton('forminertia', function () {
+            return new FormInertia();
+        });
+    }
 }

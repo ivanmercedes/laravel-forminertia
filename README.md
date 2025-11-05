@@ -21,113 +21,132 @@ Then run the installation command to publish the default resources:
 php artisan forminertia:install
 ```
 
-## ShadCN UI Components
+## Component Compatibility
 
-FormInertia uses **ShadCN UI** components such as `Input`, `Select`, `Checkbox`, and `Textarea`.
+FormInertia uses the same ShadCN UI components that come with the Laravel + Inertia Starter Kit, including Input, Select, and Checkbox.
 
-If you don’t have the `Textarea` component installed, you’ll see a warning during installation.
-You can easily add it by running:
-
-```bash
-npx shadcn@latest add textarea
-```
+However, since the Starter Kit doesn’t include a Textarea component by default, FormInertia automatically installs it during setup to ensure full compatibility out of the box.
 
 ## Usage Example
 
 ### 1. Define your schema
 
-Each field or group of fields is defined using a simple, type-safe schema.
+Each form is a PHP class that defines its structure (sections, grids, and fields).
 
-```tsx
-import { FormSchemaItem } from "@/components/forminertia/form-builder";
+```php
+<?php
 
-const userFormSchema: FormSchemaItem[] = [
+namespace App\Forms;
+
+use LaravelForminertia\Base\Form;
+use LaravelForminertia\Base\Grid;
+use LaravelForminertia\Base\Section;
+use LaravelForminertia\Fields\{TextField, SelectField, CheckboxField, TextareaField};
+
+class UserForm extends Form
+{
+    public function schema(): array
     {
-        type: "section",
-        heading: "User Information",
-        schema: [
-            {
-                type: "text",
-                name: "name",
-                label: "Full Name",
-                placeholder: "John Doe",
-                required: true,
-            },
-            {
-                type: "text",
-                name: "email",
-                label: "Email Address",
-                inputType: "email",
-                placeholder: "user@example.com",
-                required: true,
-            },
-            {
-                type: "select",
-                name: "role",
-                label: "User Role",
-                required: true,
-                options: {
-                    admin: "Administrator",
-                    editor: "Editor",
-                    user: "User",
-                },
-            },
-        ],
-    },
-    {
-        type: "section",
-        heading: "Preferences",
-        schema: [
-            {
-                type: "checkbox",
-                name: "is_active",
-                label: "Active Account",
-            },
-            {
-                type: "textarea",
-                name: "bio",
-                label: "Biography",
-                rows: 4,
-                placeholder: "Tell us a bit about this user...",
-            },
-        ],
-    },
-];
+        return [
+            Section::make('User Information')
+                ->schema([
+                    Grid::make(2)
+                        ->schema([
+                            TextField::make('name')
+                                ->label('Full Name')
+                                ->placeholder('John Doe')
+                                ->required(),
+                            TextField::make('email')
+                                ->label('Email Address')
+                                ->type('email')
+                                ->placeholder('user@example.com')
+                                ->required(),
+                            SelectField::make('role')
+                                ->label('User Role')
+                                ->required()
+                                ->options([
+                                    'admin' => 'Administrator',
+                                    'editor' => 'Editor',
+                                    'user' => 'User',
+                                ]),
+                        ])
+                ]),
+            Section::make('Preferences')
+                ->schema([
+                    CheckboxField::make('is_active')
+                        ->label('Active Account'),
+                    TextareaField::make('bio')
+                        ->label('Biography')
+                        ->rows(6)
+                        ->placeholder('Tell us a bit about this user...'),
+                ]),
+        ];
+    }
+}
+
 ```
 
-Then render it inside your page:
+### 2. Create a Controller
 
-```tsx
-import { store } from "@/routes/login";
-import FormBuilder from "@/components/forminertia/form-builder";
+The controller injects the schema into your Inertia view.
 
-<FormBuilder
-    schema={userFormSchema}
-    form={store.form()}
-    submitLabel="Create User"
-/>;
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Forms\UserForm;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class UserController extends Controller
+{
+    public function create()
+    {
+        // Get the form schema
+        $form = UserForm::make();
+
+        // Pass it to the Inertia page
+        return Inertia::render('user/create', [
+            'form' => $form,
+        ]);
+    }
+}
 ```
 
-## Supported Field Types
+### 3. Then render it inside your page:
 
-| Type       | Description           |
-| ---------- | --------------------- |
-| `text`     | Standard input fields |
-| `textarea` | Multiline text areas  |
-| `select`   | Dropdown lists        |
-| `checkbox` | Checkbox inputs       |
-| `date`     | Date picker inputs    |
+```tsx
+import { store } from "@/routes/users";
+import FormBuilder, {
+    FormBuilderProps,
+} from "@/components/forminertia/form-builder";
 
----
+export default function create({
+    form,
+}: {
+    form: FormBuilderProps["formSchema"];
+}) {
+    return (
+        <div className="max-w-3xl mx-auto">
+            <FormBuilder
+                formSchema={form}
+                form={store.form()}
+                submitLabel="Create User"
+            />
+        </div>
+    );
+}
+```
 
 ## Features
 
--   Designed for the **Laravel Inertia React Starter Kit**
--   Uses **ShadCN UI** for consistent and elegant styling
--   Auto-installer for base form components
--   Type-safe form schemas with **TypeScript**
--   Extendable and customizable for any use case
--   **Vue support coming soon**
+-   Plug-and-play form builder for Laravel + Inertia (React)
+-   Define forms using PHP schemas (Sections, Grids, Fields)
+-   Automatically renders dynamic forms in your Inertia React app
+-   Type-safe integration between PHP and TypeScript
+-   Includes an installer command (php artisan forminertia:install) to set up resources
+-   Vue 3 + Inertia support coming soon
 
 ## License
 
