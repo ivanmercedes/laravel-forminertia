@@ -2,7 +2,7 @@
     "name": "ivanmercedes/laravel-forminertia",
     "description": "A plug-and-play form builder for Laravel’s Inertia Starter Kit — powered by ShadCN UI.",
     "keywords": [
-        "ivanmercedes/laravel-forminertia",
+        "forminertia",
         "laravel",
         "form-builder",
         "inertia",
