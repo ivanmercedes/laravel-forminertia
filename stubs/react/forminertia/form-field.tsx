@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import React,{ useState } from "react";
+import React, { useState } from "react";
 
 export type FieldType = "text" | "textarea" | "select" | "checkbox" | "date";
 
@@ -40,17 +40,19 @@ export interface FormFieldProps {
 export const FormField: React.FC<FormFieldProps> = ({ field, error }) => {
     const fieldId = `field-${field.name}`;
 
-    const [value, setValue] = useState(
-        field.value ?? (field.type === "checkbox" ? false : "")
-    );
+    
+    const getInitialValue = () => {
+        if (field.value !== undefined && field.value !== null) {
+            return field.value;
+        }
+        return field.type === "checkbox" ? false : "";
+    };
+
+    const [value, setValue] = useState(getInitialValue);
 
     const handleChange = (newValue: string | boolean) => {
         setValue(newValue);
     };
-
-    const TextareaComponent = React.lazy(
-        () => import("@/components/ui/textarea")
-    );
 
     const renderInput = () => {
         switch (field.type) {

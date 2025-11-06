@@ -96,6 +96,7 @@ The controller injects the schema into your Inertia view.
 namespace App\Http\Controllers;
 
 use App\Forms\UserForm;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -103,10 +104,34 @@ class UserController extends Controller
 {
     public function create()
     {
-        // Get the form schema
+        // Create form without data (for new records)
         $form = UserForm::make();
 
-        // Pass it to the Inertia page
+        return Inertia::render('user/create', [
+            'form' => $form,
+        ]);
+    }
+
+    public function edit(User $user)
+    {
+        // Fill form with existing data - now works directly with models!
+        $form = UserForm::make($user);
+
+        return Inertia::render('user/edit', [
+            'form' => $form,
+        ]);
+    }
+
+    public function editWithDefaults()
+    {
+        // Fill form with custom default values
+        $form = UserForm::make([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'role' => 'user',
+            'is_active' => true,
+        ]);
+
         return Inertia::render('user/create', [
             'form' => $form,
         ]);
@@ -139,9 +164,73 @@ export default function create({
 }
 ```
 
+## Fill Data - Clean & Simple
+
+Forminertia makes it incredibly easy to populate forms with existing data.Here are the different ways you can do it:
+
+### Method 1: Direct with Eloquent Models
+
+```php
+// Fill form directly with Eloquent models
+$user = User::find(1);
+$form = UserForm::make($user);
+```
+
+### Method 2: Direct Array Data
+
+```php
+// Fill form with array data
+$form = UserForm::make([
+    'name' => 'John Doe',
+    'email' => 'john@example.com',
+    'role' => 'admin',
+    'is_active' => true,
+]);
+```
+
+### Method 3: With Collections
+
+```php
+// Works with Collections too
+$userData = collect([
+    'name' => 'Jane Doe',
+    'email' => 'jane@example.com',
+    'role' => 'editor',
+]);
+$form = UserForm::make($userData);
+```
+
+### Method 4: Chain Fill Method
+
+```php
+// Create form first, then fill
+$form = UserForm::make()
+    ->fill(['name' => 'Jane Doe', 'email' => 'jane@example.com'])
+    ->build();
+```
+
+### Method 5: Using fillFromModel Method
+
+```php
+// Alternative method for any object with toArray()
+$user = User::find(1);
+$form = UserForm::make()->fillFromModel($user)->build();
+```
+
+**Smart Data Handling**: The form automatically detects the data type and converts it appropriately:
+
+-   **Eloquent Models**: Automatically calls `->toArray()`
+-   **Collections**: Automatically calls `->toArray()`
+-   **Arrays**: Used directly
+-   **Objects with `toArray()`**: Automatically converted
+-   **Other objects**: Cast to array
+
+Fields will automatically populate with matching data. Fields without matching data will use their default values or remain empty.
+
 ## Features
 
 -   Plug-and-play form builder for Laravel + Inertia (React)
+-   Clean and simple data filling system
 -   Define forms using PHP schemas (Sections, Grids, Fields)
 -   Automatically renders dynamic forms in your Inertia React app
 -   Type-safe integration between PHP and TypeScript
