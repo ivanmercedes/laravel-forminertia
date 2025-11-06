@@ -12,20 +12,26 @@ use Symfony\Component\Process\Process;
 #[AsCommand(name: 'forminertia:install')]
 class InstallCommand extends Command implements PromptsForMissingInput
 {
-    protected $signature = 'forminertia:install {--force : Overwrite existing files}';
+    protected $signature = 'forminertia:install {--stack=react : The frontend stack to install (react or vue)} {--force : Overwrite existing files}';
 
     protected $description = 'Install FormInertia resources';
 
     public function handle(): int
     {
-        $this->info('Installing resources...');
+        $stack = $this->option('stack');
 
-        $source = __DIR__.'/../../stubs/react';
+        if (!in_array($stack, ['react', 'vue'])) {
+            $this->error('Invalid stack. Please choose either "react" or "vue".');
+            return self::FAILURE;
+        }
+
+        $this->info("Installing {$stack} resources...");
+
+        $source = __DIR__ . "/../../stubs/{$stack}";
         $destination = resource_path('js/components');
 
         if (! File::exists($source)) {
             $this->error('Source folder not found.');
-
             return self::FAILURE;
         }
 
@@ -37,7 +43,23 @@ class InstallCommand extends Command implements PromptsForMissingInput
             $this->copyWithoutOverwriting($source, $destination);
         }
 
-        $textareaPath = resource_path('js/components/ui/textarea.tsx');
+        $this->installTextareaComponent($stack);
+
+        $this->components->info("✅ FormInertia {$stack} components installed successfully.");
+
+        if ($stack === 'vue') {
+            $this->displayVueUsageExample();
+        } else {
+            $this->displayReactUsageExample();
+        }
+
+        return self::SUCCESS;
+    }
+
+    private function installTextareaComponent(string $stack): void
+    {
+        $extension = $stack === 'vue' ? 'vue' : 'tsx';
+        $textareaPath = resource_path("js/components/ui/textarea.{$extension}");
 
         if (! file_exists($textareaPath)) {
             $this->newLine();
@@ -65,14 +87,60 @@ class InstallCommand extends Command implements PromptsForMissingInput
         } else {
             $this->components->info('✅ Textarea component already installed.');
         }
+    }
 
-        return self::SUCCESS;
+    private function displayVueUsageExample(): void
+    {
+        $this->newLine();
+        $this->line('<fg=green>Vue Usage Example:</>');
+        $this->line('');
+        $this->line('<fg=yellow>In your Vue component:</>');
+        $this->line('');
+        $this->line('<template>');
+        $this->line('  <div class="max-w-3xl mx-auto">');
+        $this->line('    <FormBuilder');
+        $this->line('      :form-schema="form"');
+        $this->line('      :form="formData"');
+        $this->line('      submit-label="Create User"');
+        $this->line('    />');
+        $this->line('  </div>');
+        $this->line('</template>');
+        $this->line('');
+        $this->line('<script setup>');
+        $this->line('import { useForm } from "@inertiajs/vue3"');
+        $this->line('import FormBuilder from "@/components/forminertia/FormBuilder.vue"');
+        $this->line('');
+        $this->line('const props = defineProps(["form"])');
+        $this->line('const formData = useForm({})');
+        $this->line('</script>');
+    }
+
+    private function displayReactUsageExample(): void
+    {
+        $this->newLine();
+        $this->line('<fg=green>React Usage Example:</>');
+        $this->line('');
+        $this->line('<fg=yellow>In your React component:</>');
+        $this->line('');
+        $this->line('import FormBuilder from "@/components/forminertia/form-builder";');
+        $this->line('');
+        $this->line('export default function Create({ form }) {');
+        $this->line('  return (');
+        $this->line('    <div className="max-w-3xl mx-auto">');
+        $this->line('      <FormBuilder');
+        $this->line('        formSchema={form}');
+        $this->line('        form={store.form()}');
+        $this->line('        submitLabel="Create User"');
+        $this->line('      />');
+        $this->line('    </div>');
+        $this->line('  );');
+        $this->line('}');
     }
 
     private function copyWithoutOverwriting(string $source, string $destination): void
     {
         foreach (File::allFiles($source) as $file) {
-            $target = $destination.'/'.$file->getRelativePathname();
+            $target = $destination . '/' . $file->getRelativePathname();
 
             File::ensureDirectoryExists(dirname($target));
 
@@ -96,12 +164,12 @@ class InstallCommand extends Command implements PromptsForMissingInput
             try {
                 $process->setTty(true);
             } catch (RuntimeException $e) {
-                $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
             }
         }
 
         $process->run(function ($type, $line) {
-            $this->output->write('    '.$line);
+            $this->output->write('    ' . $line);
         });
     }
 }

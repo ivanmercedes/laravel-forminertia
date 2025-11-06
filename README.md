@@ -18,7 +18,11 @@ composer require ivanmercedes/laravel-forminertia
 Then run the installation command to publish the default resources:
 
 ```bash
+# For React (default)
 php artisan forminertia:install
+
+# For Vue 3
+php artisan forminertia:install --stack=vue
 ```
 
 ## Component Compatibility
@@ -141,6 +145,8 @@ class UserController extends Controller
 
 ### 3. Then render it inside your page:
 
+#### React Example
+
 ```tsx
 import { store } from "@/routes/users";
 import FormBuilder, {
@@ -162,6 +168,31 @@ export default function create({
         </div>
     );
 }
+```
+
+#### Vue Example
+
+```vue
+<template>
+    <div class="max-w-3xl mx-auto">
+        <FormBuilder
+            :form-schema="form"
+            :form="formData"
+            submit-label="Create User"
+        />
+    </div>
+</template>
+
+<script setup>
+import { useForm } from "@inertiajs/vue3";
+import FormBuilder from "@/components/forminertia/FormBuilder.vue";
+
+const props = defineProps(["form"]);
+
+const formData = useForm({
+    // Your form data here
+});
+</script>
 ```
 
 ## Fill Data - Clean & Simple
@@ -229,13 +260,14 @@ Fields will automatically populate with matching data. Fields without matching d
 
 ## Features
 
--   Plug-and-play form builder for Laravel + Inertia (React)
+-   Plug-and-play form builder for Laravel + Inertia (React & Vue 3)
 -   Clean and simple data filling system
 -   Define forms using PHP schemas (Sections, Grids, Fields)
--   Automatically renders dynamic forms in your Inertia React app
--   Type-safe integration between PHP and TypeScript
--   Includes an installer command (php artisan forminertia:install) to set up resources
--   Vue 3 + Inertia support coming soon
+-   Automatically renders dynamic forms in your Inertia React or Vue app
+-   Type-safe integration between PHP and TypeScript/JavaScript
+-   Support for both React and Vue 3 frontend stacks
+-   Includes an installer command with stack selection (php artisan forminertia:install --stack=vue)
+-   Compatible with ShadCN UI components
 
 ## License
 
