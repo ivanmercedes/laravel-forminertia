@@ -20,18 +20,20 @@ class InstallCommand extends Command implements PromptsForMissingInput
     {
         $stack = $this->option('stack');
 
-        if (!in_array($stack, ['react', 'vue'])) {
+        if (! in_array($stack, ['react', 'vue'])) {
             $this->error('Invalid stack. Please choose either "react" or "vue".');
+
             return self::FAILURE;
         }
 
         $this->info("Installing {$stack} resources...");
 
-        $source = __DIR__ . "/../../stubs/{$stack}";
+        $source = __DIR__."/../../stubs/{$stack}";
         $destination = resource_path('js/components');
 
         if (! File::exists($source)) {
             $this->error('Source folder not found.');
+
             return self::FAILURE;
         }
 
@@ -140,7 +142,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
     private function copyWithoutOverwriting(string $source, string $destination): void
     {
         foreach (File::allFiles($source) as $file) {
-            $target = $destination . '/' . $file->getRelativePathname();
+            $target = $destination.'/'.$file->getRelativePathname();
 
             File::ensureDirectoryExists(dirname($target));
 
@@ -164,12 +166,12 @@ class InstallCommand extends Command implements PromptsForMissingInput
             try {
                 $process->setTty(true);
             } catch (RuntimeException $e) {
-                $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
             }
         }
 
         $process->run(function ($type, $line) {
-            $this->output->write('    ' . $line);
+            $this->output->write('    '.$line);
         });
     }
 }
