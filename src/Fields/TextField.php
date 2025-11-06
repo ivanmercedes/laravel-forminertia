@@ -11,6 +11,7 @@ class TextField extends Field
     public function type(string $type): static
     {
         $this->inputType = $type;
+
         return $this;
     }
 

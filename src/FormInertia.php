@@ -4,7 +4,6 @@ namespace LaravelForminertia;
 
 class FormInertia
 {
-
     public function form(string $formClass, array $data = []): array
     {
         if (! class_exists($formClass)) {

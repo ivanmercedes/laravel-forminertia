@@ -3,9 +3,9 @@
 use LaravelForminertia\Base\Form;
 use LaravelForminertia\Base\Grid;
 use LaravelForminertia\Base\Section;
-use LaravelForminertia\Fields\TextField;
-use LaravelForminertia\Fields\SelectField;
 use LaravelForminertia\Fields\CheckboxField;
+use LaravelForminertia\Fields\SelectField;
+use LaravelForminertia\Fields\TextField;
 
 class TestForm extends Form
 {
@@ -29,7 +29,7 @@ class TestForm extends Form
                                     'admin' => 'Administrator',
                                     'user' => 'User',
                                 ]),
-                        ])
+                        ]),
                 ]),
             Section::make('Preferences')
                 ->schema([
@@ -88,7 +88,7 @@ it('can fill form with array data', function () {
 });
 
 it('can fill form using fill method', function () {
-    $form = new TestForm();
+    $form = new TestForm;
     $data = [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
@@ -107,7 +107,7 @@ it('can fill form from model-like object', function () {
         'is_active' => false,
     ];
 
-    $form = new TestForm();
+    $form = new TestForm;
     $result = $form->fillFromModel($model)->build();
 
     expect($result['data'])->toBe([
@@ -119,7 +119,8 @@ it('can fill form from model-like object', function () {
 });
 
 it('can fill form with eloquent model directly without toArray', function () {
-    $model = new class {
+    $model = new class
+    {
         public function toArray(): array
         {
             return [
