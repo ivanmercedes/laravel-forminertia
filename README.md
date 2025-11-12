@@ -21,6 +21,75 @@ Then run the installation command to publish the default resources:
 php artisan forminertia:install
 ```
 
+## Auto-Generate Forms from Database Tables
+
+FormInertia can automatically generate form classes based on your database table structure, similar to Filament's generate command:
+
+```bash
+# Generate form from model/table
+php artisan forminertia:generate User
+
+# Generate with custom table name
+php artisan forminertia:generate User --table=custom_users
+
+# Exclude specific columns
+php artisan forminertia:generate User --exclude=password,remember_token
+
+# Force overwrite existing form
+php artisan forminertia:generate User --force
+
+# Custom output path
+php artisan forminertia:generate User --path=app/Forms/Custom/UserForm.php
+```
+
+The command will:
+
+-   Analyze your table structure
+-   Map column types to appropriate form fields
+-   Generate validation rules based on nullable columns
+-   Exclude common system columns (id, timestamps, etc.)
+-   Create a ready-to-use form class
+
+**Example generated form:**
+
+```php
+<?php
+
+namespace App\Forms;
+
+use LaravelForminertia\Base\Form;
+use LaravelForminertia\Fields\TextField;
+use LaravelForminertia\Fields\TextareaField;
+use LaravelForminertia\Fields\CheckboxField;
+
+class UserForm extends Form
+{
+    public function schema(): array
+    {
+        return [
+            TextField::make('name')
+                ->label('Name')
+                ->placeholder('Enter name')
+                ->required(),
+
+            TextField::make('email')
+                ->label('Email')
+                ->placeholder('Enter email')
+                ->required(),
+
+            TextareaField::make('bio')
+                ->label('Bio')
+                ->placeholder('Enter bio')
+                ->rows(4),
+
+            CheckboxField::make('is_active')
+                ->label('Is Active')
+                ->default(false),
+        ];
+    }
+}
+```
+
 ## Component Compatibility
 
 FormInertia uses the same ShadCN UI components that come with the Laravel + Inertia Starter Kit, including Input, Select, and Checkbox.

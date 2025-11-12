@@ -2,6 +2,7 @@
 
 namespace LaravelForminertia;
 
+use LaravelForminertia\Commands\GenerateFormCommand;
 use LaravelForminertia\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -17,7 +18,8 @@ class LaravelForminertiaServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-forminertia')
-            ->hasCommand(InstallCommand::class);
+            ->hasCommand(InstallCommand::class)
+            ->hasCommand(GenerateFormCommand::class);
     }
 
     public function registeringPackage(): void
