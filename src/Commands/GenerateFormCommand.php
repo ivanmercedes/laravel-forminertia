@@ -30,7 +30,7 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
         'remember_token',
         'two_factor_secret',
         'two_factor_recovery_codes',
-        'two_factor_confirmed_at'
+        'two_factor_confirmed_at',
     ];
 
     protected array $fieldTypeMapping = [
@@ -54,8 +54,9 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
         $modelName = $this->argument('model');
         $tableName = $this->option('table') ?? Str::snake(Str::pluralStudly($modelName));
 
-        if (!$this->tableExists($tableName)) {
+        if (! $this->tableExists($tableName)) {
             $this->error("Table '{$tableName}' does not exist.");
+
             return self::FAILURE;
         }
 
@@ -65,6 +66,7 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
 
         if (empty($columns)) {
             $this->error("No columns found in table '{$tableName}'.");
+
             return self::FAILURE;
         }
 
@@ -75,20 +77,22 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
         }
 
         $filteredColumns = array_filter($columns, function ($column) use ($excludedColumns) {
-            return !in_array($column['name'], $excludedColumns);
+            return ! in_array($column['name'], $excludedColumns);
         });
 
         if (empty($filteredColumns)) {
-            $this->error("No columns to generate after applying exclusions.");
+            $this->error('No columns to generate after applying exclusions.');
+
             return self::FAILURE;
         }
 
-        $formClass = Str::studly($modelName) . 'Form';
+        $formClass = Str::studly($modelName).'Form';
         $formPath = $this->getFormPath($formClass);
 
-        if (File::exists($formPath) && !$this->option('force')) {
-            if (!$this->confirm("Form '{$formClass}' already exists. Do you want to overwrite it?")) {
+        if (File::exists($formPath) && ! $this->option('force')) {
+            if (! $this->confirm("Form '{$formClass}' already exists. Do you want to overwrite it?")) {
                 $this->info('Form generation cancelled.');
+
                 return self::SUCCESS;
             }
         }
@@ -115,7 +119,7 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
             $columns[] = [
                 'name' => $columnName,
                 'type' => $columnType,
-                'nullable' => !$this->isColumnRequired($tableName, $columnName),
+                'nullable' => ! $this->isColumnRequired($tableName, $columnName),
             ];
         }
 
@@ -128,15 +132,15 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
             $connection = DB::connection();
             $database = $connection->getDatabaseName();
 
-            $result = $connection->select("
+            $result = $connection->select('
                 SELECT IS_NULLABLE
                 FROM INFORMATION_SCHEMA.COLUMNS
                 WHERE TABLE_SCHEMA = ?
                 AND TABLE_NAME = ?
                 AND COLUMN_NAME = ?
-            ", [$database, $tableName, $columnName]);
+            ', [$database, $tableName, $columnName]);
 
-            return !empty($result) && $result[0]->IS_NULLABLE === 'NO';
+            return ! empty($result) && $result[0]->IS_NULLABLE === 'NO';
         } catch (\Exception $e) {
             // Fallback: is required
             return true;
@@ -152,7 +156,7 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
         $formsDir = app_path('Forms');
         File::ensureDirectoryExists($formsDir);
 
-        return $formsDir . '/' . $formClass . '.php';
+        return $formsDir.'/'.$formClass.'.php';
     }
 
     protected function generateForm(string $formClass, string $formPath, array $columns, string $modelName): void
@@ -190,7 +194,7 @@ class GenerateFormCommand extends Command implements PromptsForMissingInput
             $field = "            {$fieldType}::make('{$fieldName}')";
             $field .= "\n                ->label('{$label}')";
 
-            if (!$column['nullable']) {
+            if (! $column['nullable']) {
                 $field .= "\n                ->required()";
             }
 
